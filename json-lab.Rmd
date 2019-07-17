@@ -1,0 +1,54 @@
+---
+title: "json lab"
+author: "Jeff Leek"
+date: "July 12, 2016"
+output: html_document
+---
+
+1. Use Github API to get all of Hadley Wickham's repo data (username = "hadley")
+
+```{r}
+hadley_url <- "https://api.github.com/users/hadley/repos"
+
+
+jsonData <- fromJSON(hadley_url)
+date_read <- date()
+```
+
+
+2. How many stars does he have on each repository?
+
+```{r}
+jsonData$stargazers_count
+```
+
+
+3. How many open issues are there? 
+
+```{r}
+jsonData$open_issues_count
+```
+
+
+4. Create a new data frame consisting of just the "owner" column of the resulting data set called `owner_data`
+
+```{r}
+
+owner_data <- jsonData$owner
+
+```
+
+
+5. Add "owner_" to the name of all of the columns in this new data frame. You can use `names(owner_data) = paste0('owner_',names(owner_data))`
+
+```{r}
+names(owner_data) = paste0('owner_',names(owner_data))
+```
+
+
+6. Append these columns to the JSON data using the `cbind` command. 
+
+```{r}
+new_data <- cbind(jsonData, owner_data)
+```
+

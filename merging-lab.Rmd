@@ -1,0 +1,54 @@
+---
+title: "Merging Lab"
+author: "Data Wrangling in R"
+output: html_document
+---
+
+1. Download the samples data on the 1,000 genomes project from our website (https://sisbid.github.io/Module1/labs/1000genomes.xlsx).
+
+```{r}
+samples <- read_excel("labs/1000genomes.xlsx", sheet = 1)
+sequence <- read_excel("labs/1000genomes.xlsx", sheet = 4, skip = 1)
+sequence <- sequence[, 1:7]
+
+```
+
+2. Open the sheet and look at the information listed. Go to the sheet *Final Phase Sequence Data*
+
+3. Read in the first and fourth sheets (you may want to use the `readxl` package). Keep only the low coverage data from the 4th sheet. 
+
+4. Look at the cheetsheet on merging:  http://stat545.com/bit001_dplyr-cheatsheet.html
+
+
+5. Try merging the data sets with `inner_join`, `semi_join`, `left_join`,`full_join`. 
+```{r}
+inner <- inner_join(samples, sequence)
+semi <- semi_join(samples, sequence)
+left <- left_join(samples, sequence)
+full <- full_join(samples, sequence)
+```
+
+
+6. What are the dimensions of the resulting data sets? 
+
+7. The full join and and left join have the same dimensions. Are they exactly identical? 
+
+```{r}
+identical(full, inner)
+```
+
+
+8. Reverse the order of that sets on `left_join`. Do you get the same result? 
+
+```{r}
+left.rev <- left_join(sequence, samples)
+```
+
+
+9. Try `anti_join`. What happens? Read here for more on filtering joins: http://r4ds.had.co.nz/relational-data.html
+
+```{r}
+anti <- anti_join(samples, sequence)
+itna <- anti_join(sequence, samples)
+```
+

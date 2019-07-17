@@ -1,0 +1,87 @@
+---
+title: "Web + API Lab"
+author: ""
+date: "July 6, 2015"
+output: html_document
+---
+
+### Web scraping
+
+In this exercise we will be scraping data from the 2019 World Cup (that was totally just won by the amazing US Women's team :)). 
+
+
+
+1. Go to the website https://www.espn.com/soccer/league/_/name/fifa.wwc
+
+```{r}
+women.url <- "https://www.espn.com/soccer/league/_/name/fifa.wwc"
+htmlfile <- read_html(women.url)
+```
+
+2. View the source to see how the page is structured, can you find the standings table in the HTML code?
+3. Inspect the element and try to find the Xpath for the table for the standings. 
+4. Adapt the code we learned to scrape the standings table. 
+
+```{r}
+
+nds <- html_nodes(htmlfile,                
+                 xpath='//*[@id="main-container"]/div/section[2]/article[2]/div/table')
+
+dat <- html_table(nds)
+dat <- as.data.frame(dat)
+head(dat)
+```
+
+
+
+6. Go to https://www.bioconductor.org/packages/release/BiocViews.html#___Software
+7. Try to find the table of packages in the source code. 
+```{r}
+
+htmlfile <- read_html("https://www.bioconductor.org/packages/release/BiocViews.html#___Software")
+nds <- html_nodes(htmlfile,                
+                 xpath='//*[@id="biocViews_package_table"]')
+
+dat <- html_table(nds)
+dat <- as.data.frame(dat)
+head(dat)
+```
+
+
+
+8. Can you figure out why it is or isn't there? 
+
+
+### APIs
+
+Let's play around with the Ensembl API (http://rest.ensembl.org/) for extracting informtion. This is an open API so you don't need a developer account. 
+
+1. Download information on _Oct4_ from Ensembl using this call:
+```{r,eval=FALSE}
+library(jsonlite)
+oct4_dat = fromJSON("http://rest.ensembl.org//lookup/id/ENSG00000204531?content-type=application/json;expand=1")
+```
+
+2. Explore the `oct4_dat` variable that results. Look particularly at `oct4_dat$Transcript` column by column with the commands `oct4_dat$Transcript`
+
+4. The Ensembl ID for the gene _P53_ is ENSG00000141510. How do you think you'd change the command above to look up this gene?
+
+```{r}
+p53_dat = fromJSON("http://rest.ensembl.org//lookup/id/ENSG00000141510?content-type=application/json;expand=1")
+```
+
+
+5. Based on the Ensembl docs how would you look up the ensembl id for another gene like _BRAF_? 
+
+To look up the BRAF gene information we would. 
+
+1. Look at the docs under GET species lookup http://rest.ensembl.org/documentation/info/symbol_lookup. 
+2. We'd look at the Example Request: `/lookup/symbol/homo_sapiens/BRCA2?content-type=application/json;expand=1` and modify it with our gene like so: 
+`/lookup/symbol/homo_sapiens/BRAF?content-type=application/json;expand=1`
+3. We'd crete the url using the base url like this: `http://rest.ensembl.org//lookup/symbol/homo_sapiens/BRAF?content-type=application/json;expand=1`
+4. We'd request the information with `fromJSON`
+```{r}
+braf_info = fromJSON("http://rest.ensembl.org//lookup/symbol/homo_sapiens/BRAF?content-type=application/json;expand=1")
+braf_info$id
+```
+

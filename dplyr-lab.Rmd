@@ -1,0 +1,63 @@
+---
+title: "dplyr Lab"
+author: "Data Wrangling in R"
+output: html_document
+---
+
+1. Download the samples data on the 1,000 genomes project: (https://sisbid.github.io/Module1/labs/1000genomes.xlsx).
+
+```{r}
+
+pacman::p_load(tidyverse, readxl)
+samples <- read_excel("labs/1000genomes.xlsx", sheet = "Final Phase Sequence Data", skip = 1)
+
+samples <- samples[, 1:7]
+
+```
+
+2. Open the sheet and look at the information listed. Go to the sheet _Final Phase Sequence Data_
+
+3. Read the _Final Phase Sequence Data_ sheet. Only read the data for the low coverage samples.  
+
+4. Calculate total sequence by platform
+```{r}
+colnames(samples) = colnames(samples) %>% tolower() %>% gsub(x=.,pattern=" ",replacement="") %>% substr(1,10)
+
+samples %>% 
+  group_by(platform..) %>% 
+  summarise(total.sequence = sum(totalseque))
+```
+
+
+
+5. Do the same thing by sequencing center
+
+```{r}
+samples %>% 
+  group_by(center...3) %>% 
+  summarise(total.sequence = sum(totalseque))
+```
+
+
+6. Find the subset of samples that passed QC. 
+
+```{r}
+passed <- samples %>% 
+  filter(passedqc.. == 1)
+```
+
+7. Find the subset that passed QC and came from the BCM center
+```{r}
+passed <- samples %>% 
+  filter(passedqc.. == 1 & center...3 == "BCM")
+```
+
+
+8. Calculate the average aligned coverage for each population on the subset of samples that passed QC that came from the BCM. 
+
+```{r}
+blah <- samples %>% 
+  filter(passedqc.. == 1 & center...3 == "BCM") %>% 
+  summarise(avg.aliged = mean(alignednon, na.rm = T),
+            n.sample = n())
+```
